@@ -20,13 +20,13 @@
 
 ## Introduction
 
-Kernel is responsible for the bootstrap process of service providers. It offers you a easy and intuitive way to register you own providers. The boot process consists of three steps - `instantiation`, `initialization` and `booting`. There is also an additional step - `shutdown`. This gives your providers a lot of flexibility on when to do what.
+Kernel is responsible for the bootstrap process of service providers. It offers you a easy and intuitive way to register your own providers. The boot process consists of three steps - `instantiation`, `initialization` and `booting`. There is also an additional step - `shutdown`. This gives your providers a lot of flexibility on when to do what.
 
 ## Usage
 
 ### Creating a provider
 
-Any class can be used as a provider. If the provider has any of these methods `initialize`, `boot`, `shutdown`, the container will invoke them accordingly.
+Any class can be used as a provider. If the provider has any of these methods `initialize`, `boot`, `shutdown`, the container will invoke them accordingly. It does not require a specific interface. This is by choice, I'll explain why I chose this solution in one of the future readme updates.
 
 ```php
 class MyServiceProvider {}
@@ -52,7 +52,7 @@ $kernel->addProviders([
 
 ### Initialization
 
-When you initialize the kernel, all of its service providers get instantiated.
+When you initialize the kernel, all of its service providers get instantiated and initialized.
 
 ```php
 $kernel->initialize();
@@ -60,7 +60,7 @@ $kernel->initialize();
 
 ### Booting
 
-On boot, all service providers will be booted. This is a good place to setup you provider and do your work.
+On boot, all service providers will be booted. This is a good place to setup your provider and do some work.
 
 ```php
 $kernel->boot();
