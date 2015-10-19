@@ -111,15 +111,15 @@ class ContainerProviderInvoker implements IProviderInvoker {
         $this->container->get($providerClass, ['shared' => $shared]);
     }
 
-    public function initialize(IProvider $provider, IDictionary $shared) {
+    public function initialize($provider, IDictionary $shared) {
         $this->container->callMethod($provider, 'initialize', ['shared' => $shared]);
     }
 
-    public function boot(IProvider $provider, IDictionary $shared) {
+    public function boot($provider, IDictionary $shared) {
         $this->container->callMethod($provider, 'boot', ['shared' => $shared]);
     }
 
-    public function shutdown(IProvider $provider, IDictionary $shared) {
+    public function shutdown($provider, IDictionary $shared) {
         $this->container->callMethod($provider, 'shutdown', ['shared' => $shared]);
     }
 }
