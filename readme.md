@@ -16,6 +16,7 @@
 - [Extension](#extension)
     - [Sharing data between providers](#sharing-data-between-providers)
     - [Custom container support](#custom-container-support)
+- [Existing container integrations](#existing-container-integrations)
 - [Related projects](#related-projects)
 
 ## Introduction
@@ -132,6 +133,10 @@ $kernel->setProviderInvoker($invoker);
 ```
 
 From now on all providers will benefit from constructor and method injection and will be able to share anything in the container. Depending on which container package you use the `IProviderInvoker` implementation may vary, but the idea stays the same.
+
+## Existing container integrations
+
+There is an integration available for the [weew/php-container](https://github.com/weew/php-container) container. See [weew/php-kernel-container-aware](https://github.com/weew/php-kernel-container-aware).
 
 ## Related projects
 
