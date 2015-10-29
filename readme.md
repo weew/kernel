@@ -7,6 +7,7 @@
 
 ## Table of contents
 
+- [Installation](#installation)
 - [Introduction](#introduction)
 - [Usage](#usage)
     - [Creating a provider](#creating-a-provider)
@@ -18,6 +19,10 @@
     - [Custom container support](#custom-container-support)
 - [Existing container integrations](#existing-container-integrations)
 - [Related projects](#related-projects)
+
+## Installation
+
+`composer require weew/php-kernel`
 
 ## Introduction
 
