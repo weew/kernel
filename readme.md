@@ -145,4 +145,4 @@ There is an integration available for the [weew/php-container](https://github.co
 
 ## Related projects
 
-[PHP Container](https://github.com/weew/php-container) works very well together with this package.
+- [PHP Container](https://github.com/weew/php-container) works very well together with this package.
