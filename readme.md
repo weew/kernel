@@ -1,9 +1,11 @@
 # PHP Kernel
 
-[![Build Status](https://travis-ci.org/weew/php-kernel.svg?branch=master)](https://travis-ci.org/weew/php-kernel)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/weew/php-kernel/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/weew/php-kernel/?branch=master)
-[![Coverage Status](https://coveralls.io/repos/weew/php-kernel/badge.svg?branch=master&service=github)](https://coveralls.io/github/weew/php-kernel?branch=master)
-[![License](https://poser.pugx.org/weew/php-kernel/license)](https://packagist.org/packages/weew/php-kernel)
+[![Build Status](https://img.shields.io/travis/weew/php-kernel.svg)](https://travis-ci.org/weew/php-kernel)
+[![Code Quality](https://img.shields.io/scrutinizer/g/weew/php-kernel.svg)](https://scrutinizer-ci.com/g/weew/php-kernel)
+[![Test Coverage](https://img.shields.io/coveralls/weew/php-kernel.svg)](https://coveralls.io/github/weew/php-kernel)
+[![Dependencies](https://img.shields.io/versioneye/d/php/weew:php-kernel.svg)](https://versioneye.com/php/weew:php-kernel)
+[![Version](https://img.shields.io/packagist/v/weew/php-kernel.svg)](https://packagist.org/packages/weew/php-kernel)
+[![Licence](https://img.shields.io/packagist/l/weew/php-kernel.svg)](https://packagist.org/packages/weew/php-kernel)
 
 ## Table of contents
 
