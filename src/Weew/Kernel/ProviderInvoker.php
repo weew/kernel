@@ -2,7 +2,7 @@
 
 namespace Weew\Kernel;
 
-use Weew\Foundation\IDictionary;
+use Weew\Collections\IDictionary;
 
 class ProviderInvoker implements IProviderInvoker {
     /**

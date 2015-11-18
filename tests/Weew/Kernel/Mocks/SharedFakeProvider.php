@@ -2,7 +2,7 @@
 
 namespace Tests\Weew\Kernel\Mocks;
 
-use Weew\Foundation\IDictionary;
+use Weew\Collections\IDictionary;
 
 class SharedFakeProvider {
     public $status;

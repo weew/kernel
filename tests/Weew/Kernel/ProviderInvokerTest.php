@@ -5,7 +5,7 @@ namespace Tests\Weew\Kernel;
 use PHPUnit_Framework_TestCase;
 use Tests\Weew\Kernel\mocks\FakeProvider;
 use Tests\Weew\Kernel\Mocks\SharedFakeProvider;
-use Weew\Foundation\Dictionary;
+use Weew\Collections\Dictionary;
 use Weew\Kernel\ProviderInvoker;
 
 class ProviderInvokerTest extends PHPUnit_Framework_TestCase {

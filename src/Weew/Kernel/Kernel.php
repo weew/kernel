@@ -3,8 +3,8 @@
 namespace Weew\Kernel;
 
 use InvalidArgumentException;
-use Weew\Foundation\Dictionary;
-use Weew\Foundation\IDictionary;
+use Weew\Collections\Dictionary;
+use Weew\Collections\IDictionary;
 use Weew\Kernel\Exceptions\KernelException;
 
 class Kernel implements IKernel {
