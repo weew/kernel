@@ -90,8 +90,8 @@ class KernelTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals([], $kernel->getProviders());
         $kernel->addProvider(FakeProvider::class);
         $this->assertEquals(1, count($kernel->getProviders()));
-        $kernel->addProviders([FakeProvider::class, FakeProvider::class]);
-        $this->assertEquals(3, count($kernel->getProviders()));
+        $kernel->addProviders([self::class, self::class]);
+        $this->assertEquals(2, count($kernel->getProviders()));
         $kernel->setProviders([FakeProvider::class]);
         $this->assertEquals(1, count($kernel->getProviders()));
     }

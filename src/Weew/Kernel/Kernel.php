@@ -56,7 +56,9 @@ class Kernel implements IKernel {
             );
         }
 
-        foreach ($this->providers as $class) {
+        for ($i = 0; array_has($this->providers, $i); $i++) {
+            $class = $this->providers[$i];
+
             $provider = $this->getProviderInvoker()->create($class, $this->getSharedArguments());
             $this->providerInstances[$class] = $provider;
 
@@ -83,7 +85,7 @@ class Kernel implements IKernel {
             if (method_exists($provider, 'boot')) {
                 $this->getProviderInvoker()->boot($provider, $this->getSharedArguments());
             }
-        }
+        };
 
         $this->setStatus(KernelStatus::BOOTED);
     }
@@ -103,7 +105,7 @@ class Kernel implements IKernel {
             if (method_exists($provider, 'shutdown')) {
                 $this->getProviderInvoker()->shutdown($provider, $this->getSharedArguments());
             }
-        }
+        };
 
         $this->setStatus(KernelStatus::SHUTDOWN);
     }
@@ -118,7 +120,9 @@ class Kernel implements IKernel {
             );
         }
 
-        $this->providers[] = $providerClass;
+        if ( ! in_array($providerClass, $this->providers)) {
+            $this->providers[] = $providerClass;
+        }
     }
 
     /**
