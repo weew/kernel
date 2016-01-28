@@ -2,9 +2,9 @@
 
 namespace Weew\Kernel;
 
-use InvalidArgumentException;
 use Weew\Collections\Dictionary;
 use Weew\Collections\IDictionary;
+use Weew\Kernel\Exceptions\InvalidProviderException;
 use Weew\Kernel\Exceptions\KernelException;
 
 class Kernel implements IKernel {
@@ -49,79 +49,59 @@ class Kernel implements IKernel {
      * @throws KernelException
      */
     public function initialize() {
-        if ($this->getStatus() !== KernelStatus::SHUTDOWN) {
-            throw new KernelException(
-                s('Can not initialize kernel. Kernel has to be %s, kernel is %s.',
-                    KernelStatus::SHUTDOWN, $this->getStatus())
-            );
-        }
+        $this->tryToInitialize();
 
         for ($i = 0; array_has($this->providers, $i); $i++) {
-            $class = $this->providers[$i];
+            $provider = $this->providers[$i];
 
-            $provider = $this->getProviderInvoker()->create($class, $this->getSharedArguments());
-            $this->providerInstances[$class] = $provider;
+            $class = $this->getProviderClass($provider);
+            $instance = $this->createProvider($provider);
+            $this->providerInstances[$class] = $instance;
 
-            if (method_exists($provider, 'initialize')) {
-                $this->getProviderInvoker()->initialize($provider, $this->getSharedArguments());
+            if (method_exists($instance, 'initialize')) {
+                $this->getProviderInvoker()
+                    ->initialize($instance, $this->getSharedArguments());
             }
         }
-
-        $this->setStatus(KernelStatus::INITIALIZED);
     }
 
     /**
      * @throws KernelException
      */
     public function boot() {
-        if ($this->getStatus() !== KernelStatus::INITIALIZED) {
-            throw new KernelException(
-                s('Can not boot kernel. Kernel has to be %s, kernel is %s.',
-                    KernelStatus::INITIALIZED, $this->getStatus())
-            );
-        }
+        $this->tryToBoot();
 
         foreach ($this->providerInstances as $provider) {
             if (method_exists($provider, 'boot')) {
                 $this->getProviderInvoker()->boot($provider, $this->getSharedArguments());
             }
         };
-
-        $this->setStatus(KernelStatus::BOOTED);
     }
 
     /**
      * @throws KernelException
      */
     public function shutdown() {
-        if ($this->getStatus() !== KernelStatus::BOOTED) {
-            throw new KernelException(
-                s('Can not shutdown kernel. Kernel has to be %s, kernel is %s.',
-                    KernelStatus::BOOTED, $this->getStatus())
-            );
-        }
+        $this->tryToShutdown();
 
         foreach ($this->providerInstances as $provider) {
             if (method_exists($provider, 'shutdown')) {
                 $this->getProviderInvoker()->shutdown($provider, $this->getSharedArguments());
             }
         };
-
-        $this->setStatus(KernelStatus::SHUTDOWN);
     }
 
     /**
-     * @param string $providerClass
+     * @param string $provider
+     *
+     * @throws InvalidProviderException
      */
-    public function addProvider($providerClass) {
-        if ( ! class_exists($providerClass)) {
-            throw new InvalidArgumentException(
-                s('Provider class %s does not exist.', $providerClass)
-            );
-        }
+    public function addProvider($provider) {
+        $this->validateProvider($provider);
+        $class = $this->getProviderClass($provider);
 
-        if ( ! in_array($providerClass, $this->providers)) {
-            $this->providers[] = $providerClass;
+        if ( ! in_array($class, $this->providers)) {
+            $this->providers[] = $provider;
         }
     }
 
@@ -198,6 +178,28 @@ class Kernel implements IKernel {
     }
 
     /**
+     * @param $provider
+     *
+     * @throws InvalidProviderException
+     */
+    protected function validateProvider($provider) {
+        if (is_string($provider)) {
+            if ( ! class_exists($provider)) {
+                $message = s('Provider class %s does not exist.', $provider);
+
+                throw new InvalidProviderException($message);
+            }
+        } else if ( ! is_object($provider)) {
+            $message = s(
+                'Provider must be either a valid class name, or an instance, received: "%s".',
+                get_type($provider)
+            );
+
+            throw new InvalidProviderException($message);
+        }
+    }
+
+    /**
      * @return IProviderInvoker
      */
     protected function createProviderInvoker() {
@@ -209,5 +211,74 @@ class Kernel implements IKernel {
      */
     protected function createSharedArguments() {
         return new Dictionary();
+    }
+
+    /**
+     * @throws KernelException
+     */
+    protected function tryToInitialize() {
+        if ($this->getStatus() !== KernelStatus::SHUTDOWN) {
+            throw new KernelException(
+                s('Can not initialize kernel. Kernel has to be %s, kernel is %s.',
+                    KernelStatus::SHUTDOWN, $this->getStatus())
+            );
+        }
+
+        $this->setStatus(KernelStatus::INITIALIZED);
+    }
+
+    /**
+     * @throws KernelException
+     */
+    protected function tryToBoot() {
+        if ($this->getStatus() !== KernelStatus::INITIALIZED) {
+            throw new KernelException(
+                s('Can not boot kernel. Kernel has to be %s, kernel is %s.',
+                    KernelStatus::INITIALIZED, $this->getStatus())
+            );
+        }
+
+        $this->setStatus(KernelStatus::BOOTED);
+    }
+
+    /**
+     * @throws KernelException
+     */
+    protected function tryToShutdown() {
+        if ($this->getStatus() !== KernelStatus::BOOTED) {
+            throw new KernelException(
+                s('Can not shutdown kernel. Kernel has to be %s, kernel is %s.',
+                    KernelStatus::BOOTED, $this->getStatus())
+            );
+        }
+
+        $this->setStatus(KernelStatus::SHUTDOWN);
+    }
+
+    /**
+     * @param $provider
+     *
+     * @return string
+     */
+    protected function getProviderClass($provider) {
+        if (is_object($provider)) {
+            return get_class($provider);
+        }
+
+        return $provider;
+    }
+
+    /**
+     * @param $provider
+     *
+     * @return object
+     */
+    protected function createProvider($provider) {
+        if (is_string($provider)) {
+            return $this->getProviderInvoker()
+                ->create($provider, $this->getSharedArguments());
+        }
+
+        return $provider;
     }
 }

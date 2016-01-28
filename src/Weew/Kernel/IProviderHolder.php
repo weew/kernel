@@ -4,9 +4,9 @@ namespace Weew\Kernel;
 
 interface IProviderHolder {
     /**
-     * @param string $providerClass
+     * @param string $provider
      */
-    function addProvider($providerClass);
+    function addProvider($provider);
 
     /**
      * @param array $providers

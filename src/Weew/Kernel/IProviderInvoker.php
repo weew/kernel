@@ -9,7 +9,7 @@ interface IProviderInvoker {
      * @param $providerClass
      * @param IDictionary $shared
      *
-     * @return Provider
+     * @return object
      */
     function create($providerClass, IDictionary $shared);
 

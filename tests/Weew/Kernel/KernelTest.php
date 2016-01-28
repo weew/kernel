@@ -2,17 +2,17 @@
 
 namespace Tests\Weew\Kernel;
 
-use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
 use stdClass;
+use Tests\Weew\Kernel\Mocks\EmptyProvider;
 use Tests\Weew\Kernel\Mocks\FakeProvider;
 use Weew\Collections\Dictionary;
 use Weew\Collections\IDictionary;
+use Weew\Kernel\Exceptions\InvalidProviderException;
 use Weew\Kernel\Exceptions\KernelException;
 use Weew\Kernel\IProviderInvoker;
 use Weew\Kernel\Kernel;
 use Weew\Kernel\KernelStatus;
-use Weew\Kernel\Provider;
 use Weew\Kernel\ProviderInvoker;
 
 class KernelTest extends PHPUnit_Framework_TestCase {
@@ -96,12 +96,27 @@ class KernelTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(1, count($kernel->getProviders()));
     }
 
-    public function test_add_incompatible_provider() {
+    public function test_add_invalid_class_name_as_provider() {
         $kernel = new Kernel();
         $this->setExpectedException(
-            InvalidArgumentException::class, 'Provider class foo does not exist.'
+            InvalidProviderException::class, 'Provider class foo does not exist.'
         );
         $kernel->addProviders(['foo']);
+    }
+
+    public function test_add_invalid_provider_type() {
+        $kernel = new Kernel();
+        $this->setExpectedException(InvalidProviderException::class);
+        $kernel->addProvider([]);
+    }
+
+    public function test_add_instantiated_provider() {
+        $kernel = new Kernel();
+        $kernel->addProvider(new FakeProvider());
+
+        $kernel->initialize();
+        $kernel->boot();
+        $kernel->shutdown();
     }
 
     public function test_providers_are_initialized() {
@@ -133,6 +148,15 @@ class KernelTest extends PHPUnit_Framework_TestCase {
         $providers = $kernel->getProviderInstances();
         $provider = array_pop($providers);
         $this->assertEquals('shutdown', $provider->status);
+    }
+
+    public function test_providers_without_methods() {
+        $kernel = new Kernel();
+        $kernel->addProvider(EmptyProvider::class);
+        $kernel->addProvider(new stdClass());
+        $kernel->initialize();
+        $kernel->boot();
+        $kernel->shutdown();
     }
 
     public function test_get_and_set_shared_arguments() {
