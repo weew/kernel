@@ -64,7 +64,7 @@ $kernel->addProviders([
 When you configure the kernel, all of its service providers get instantiated and configured.
 
 ```php
-$kernel->initialize();
+$kernel->configure();
 ```
 
 ### Initialization
