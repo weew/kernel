@@ -5,6 +5,10 @@ namespace Tests\Weew\Kernel\Mocks;
 class FakeProvider {
     public $status;
 
+    public function configure() {
+        $this->status = 'configured';
+    }
+
     public function initialize() {
         $this->status = 'initialized';
     }

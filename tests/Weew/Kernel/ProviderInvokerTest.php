@@ -15,6 +15,14 @@ class ProviderInvokerTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($provider instanceof FakeProvider);
     }
 
+    public function test_configure() {
+        $invoker = new ProviderInvoker();
+        $provider = new FakeProvider();
+        $invoker->configure($provider, new Dictionary());
+
+        $this->assertEquals('configured', $provider->status);
+    }
+
     public function test_initialize() {
         $invoker = new ProviderInvoker();
         $provider = new FakeProvider();

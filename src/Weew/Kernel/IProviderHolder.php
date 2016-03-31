@@ -17,14 +17,4 @@ interface IProviderHolder {
      * @return array
      */
     function getProviders();
-
-    /**
-     * @param array $providers
-     */
-    function setProviders(array $providers);
-
-    /**
-     * @return array
-     */
-    function getProviderInstances();
 }

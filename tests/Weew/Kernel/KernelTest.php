@@ -9,11 +9,10 @@ use Tests\Weew\Kernel\Mocks\FakeProvider;
 use Weew\Collections\Dictionary;
 use Weew\Collections\IDictionary;
 use Weew\Kernel\Exceptions\InvalidProviderException;
-use Weew\Kernel\Exceptions\KernelException;
 use Weew\Kernel\IProviderInvoker;
 use Weew\Kernel\Kernel;
-use Weew\Kernel\KernelStatus;
 use Weew\Kernel\ProviderInvoker;
+use Weew\Kernel\ProviderTag;
 
 class KernelTest extends PHPUnit_Framework_TestCase {
     public function test_kernel_has_a_default_provider_invoker() {
@@ -29,71 +28,38 @@ class KernelTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($kernel->getProviderInvoker() === $invoker);
     }
 
-    public function test_kernel_is_shutdown() {
+    public function test_create() {
         $kernel = new Kernel();
-        $this->assertEquals(KernelStatus::SHUTDOWN, $kernel->getStatus());
+        $kernel->create();
+    }
+
+    public function test_configure() {
+        $kernel = new Kernel();
+        $kernel->initialize();
     }
 
     public function test_initialize() {
         $kernel = new Kernel();
         $kernel->initialize();
-        $this->assertEquals(KernelStatus::INITIALIZED, $kernel->getStatus());
     }
 
     public function test_boot() {
         $kernel = new Kernel();
-        $kernel->initialize();
         $kernel->boot();
-
-        $this->assertEquals(KernelStatus::BOOTED, $kernel->getStatus());
     }
 
     public function test_shutdown() {
         $kernel = new Kernel();
-        $kernel->initialize();
-        $kernel->boot();
-        $kernel->shutdown();
-
-        $this->assertEquals(KernelStatus::SHUTDOWN, $kernel->getStatus());
-    }
-
-    public function test_initialize_out_of_order() {
-        $kernel = new Kernel();
-        $kernel->initialize();
-        $this->setExpectedException(
-            KernelException::class,
-            'Can not initialize kernel. Kernel has to be shutdown, kernel is initialized.'
-        );
-        $kernel->initialize();
-    }
-
-    public function test_boot_out_of_order() {
-        $kernel = new Kernel();
-        $this->setExpectedException(
-            KernelException::class,
-            'Can not boot kernel. Kernel has to be initialized, kernel is shutdown.'
-        );
-        $kernel->boot();
-    }
-
-    public function test_shutdown_out_of_order() {
-        $kernel = new Kernel();
-        $this->setExpectedException(
-            KernelException::class,
-            'Can not shutdown kernel. Kernel has to be booted, kernel is shutdown.'
-        );
         $kernel->shutdown();
     }
 
-    public function test_get_and_set_providers() {
+    public function test_get_and_add_providers() {
         $kernel = new Kernel();
         $this->assertEquals([], $kernel->getProviders());
         $kernel->addProvider(FakeProvider::class);
         $this->assertEquals(1, count($kernel->getProviders()));
         $kernel->addProviders([self::class, self::class]);
         $this->assertEquals(2, count($kernel->getProviders()));
-        $kernel->setProviders([FakeProvider::class]);
-        $this->assertEquals(1, count($kernel->getProviders()));
     }
 
     public function test_add_invalid_class_name_as_provider() {
@@ -113,49 +79,82 @@ class KernelTest extends PHPUnit_Framework_TestCase {
     public function test_add_instantiated_provider() {
         $kernel = new Kernel();
         $kernel->addProvider(new FakeProvider());
+    }
 
-        $kernel->initialize();
-        $kernel->boot();
-        $kernel->shutdown();
+    public function test_providers_are_created() {
+        $kernel = new Kernel();
+        $kernel->addProvider(FakeProvider::class);
+        $kernel->configure();
+
+        $providers = $kernel->getProviders();
+        $this->assertEquals(1, count($providers));
+
+        $provider = array_pop($providers);
+        $this->assertTrue(array_get($provider, 'instance') instanceof FakeProvider);
+    }
+
+    public function test_providers_are_configured() {
+        $kernel = new Kernel();
+        $kernel->addProvider(FakeProvider::class);
+        $kernel->configure();
+
+        $providers = $kernel->getProviders();
+        $this->assertEquals(1, count($providers));
+
+        $provider = array_pop($providers);
+        $this->assertTrue(array_get($provider, 'instance') instanceof FakeProvider);
+        $this->assertTrue(in_array(ProviderTag::CONFIGURED, array_get($provider, 'tags')));
     }
 
     public function test_providers_are_initialized() {
         $kernel = new Kernel();
         $kernel->addProvider(FakeProvider::class);
         $kernel->initialize();
-        $providers = $kernel->getProviderInstances();
+
+        $providers = $kernel->getProviders();
         $this->assertEquals(1, count($providers));
+
         $provider = array_pop($providers);
-        $this->assertEquals('initialized', $provider->status);
+        $this->assertTrue(array_get($provider, 'instance') instanceof FakeProvider);
+        $this->assertTrue(in_array(ProviderTag::CONFIGURED, array_get($provider, 'tags')));
+        $this->assertTrue(in_array(ProviderTag::INITIALIZED, array_get($provider, 'tags')));
     }
 
     public function test_providers_are_booted() {
         $kernel = new Kernel();
         $kernel->addProvider(FakeProvider::class);
-        $kernel->initialize();
         $kernel->boot();
-        $providers = $kernel->getProviderInstances();
+
+        $providers = $kernel->getProviders();
+        $this->assertEquals(1, count($providers));
+
         $provider = array_pop($providers);
-        $this->assertEquals('booted', $provider->status);
+        $this->assertTrue(array_get($provider, 'instance') instanceof FakeProvider);
+        $this->assertTrue(in_array(ProviderTag::CONFIGURED, array_get($provider, 'tags')));
+        $this->assertTrue(in_array(ProviderTag::INITIALIZED, array_get($provider, 'tags')));
+        $this->assertTrue(in_array(ProviderTag::BOOTED, array_get($provider, 'tags')));
     }
 
     public function test_providers_are_shutdown() {
         $kernel = new Kernel();
         $kernel->addProvider(FakeProvider::class);
-        $kernel->initialize();
-        $kernel->boot();
         $kernel->shutdown();
-        $providers = $kernel->getProviderInstances();
+
+        $providers = $kernel->getProviders();
+        $this->assertEquals(1, count($providers));
+
         $provider = array_pop($providers);
-        $this->assertEquals('shutdown', $provider->status);
+        $this->assertTrue(array_get($provider, 'instance') instanceof FakeProvider);
+        $this->assertTrue(in_array(ProviderTag::CONFIGURED, array_get($provider, 'tags')));
+        $this->assertTrue(in_array(ProviderTag::INITIALIZED, array_get($provider, 'tags')));
+        $this->assertTrue(in_array(ProviderTag::BOOTED, array_get($provider, 'tags')));
+        $this->assertTrue(in_array(ProviderTag::SHUTDOWN, array_get($provider, 'tags')));
     }
 
     public function test_providers_without_methods() {
         $kernel = new Kernel();
         $kernel->addProvider(EmptyProvider::class);
         $kernel->addProvider(new stdClass());
-        $kernel->initialize();
-        $kernel->boot();
         $kernel->shutdown();
     }
 
@@ -171,6 +170,9 @@ class KernelTest extends PHPUnit_Framework_TestCase {
     public function test_kernel_with_simple_providers() {
         $kernel = new Kernel();
         $kernel->addProvider(stdClass::class);
+
+        $kernel->create();
+        $kernel->configure();
         $kernel->initialize();
         $kernel->boot();
         $kernel->shutdown();

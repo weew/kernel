@@ -6,12 +6,18 @@ use Weew\Collections\IDictionary;
 
 interface IProviderInvoker {
     /**
-     * @param $providerClass
+     * @param string $providerClass
      * @param IDictionary $shared
      *
      * @return object
      */
     function create($providerClass, IDictionary $shared);
+
+    /**
+     * @param object $provider
+     * @param IDictionary $shared
+     */
+    function configure($provider, IDictionary $shared);
 
     /**
      * @param object $provider

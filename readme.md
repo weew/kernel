@@ -34,12 +34,13 @@ Kernel is responsible for the bootstrap process of service providers. It offers 
 
 ### Creating a provider
 
-Any class can be used as a provider. If the provider has any of these methods `initialize`, `boot`, `shutdown`, the container will invoke them accordingly. It does not require a specific interface. This is by choice, I'll explain why I chose this solution in one of the future readme updates.
+Any class can be used as a provider. If the provider has any of these methods `configure`, `initialize`, `boot`, `shutdown`, the container will invoke them accordingly. It does not require a specific interface. This is by choice, I'll explain why I chose this solution in one of the future readme updates.
 
 ```php
 class MyServiceProvider {}
 // or
 class MyServiceProvider {
+    public function configure() {}
     public function initialize() {}
     public function boot() {}
     public function shutdown() {}
@@ -58,9 +59,17 @@ $kernel->addProviders([
 ]);
 ```
 
+### Configuration
+
+When you configure the kernel, all of its service providers get instantiated and configured.
+
+```php
+$kernel->initialize();
+```
+
 ### Initialization
 
-When you initialize the kernel, all of its service providers get instantiated and initialized.
+When you initialize the kernel, all of its service providers get initialized.
 
 ```php
 $kernel->initialize();
@@ -117,6 +126,10 @@ class ContainerProviderInvoker implements IProviderInvoker {
 
     public function create($providerClass, IDictionary $shared) {
         $this->container->get($providerClass, ['shared' => $shared]);
+    }
+
+    public function configure($provider, IDictionary $shared) {
+        $this->container->callMethod($provider, 'configure', ['shared' => $shared]);
     }
 
     public function initialize($provider, IDictionary $shared) {
