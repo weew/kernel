@@ -40,6 +40,13 @@ class Kernel implements IKernel {
      * @return void
      */
     public function create() {
+        $this->createEach();
+    }
+
+    /**
+     * Instantiate all providers.
+     */
+    protected function createEach() {
         foreach ($this->providers as $class => &$data) {
             if ( ! array_get($data, 'instance')) {
                 $instance = $this->getProviderInvoker()
@@ -58,6 +65,15 @@ class Kernel implements IKernel {
      * @return void
      */
     public function configure() {
+        $this->configureEach();
+    }
+
+    /**
+     * Configure all providers.
+     *
+     * @return void
+     */
+    protected function configureEach() {
         foreach ($this->providers as $class => &$data) {
             if ( ! in_array(ProviderTag::CONFIGURED, array_get($data, 'tags'))) {
                 $this->create();
@@ -70,7 +86,7 @@ class Kernel implements IKernel {
                         ->configure($instance, $this->getSharedArguments());
                 }
 
-                $this->configure();
+                $this->configureEach();
                 break;
             }
         }
@@ -82,6 +98,15 @@ class Kernel implements IKernel {
      * @return void
      */
     public function initialize() {
+        $this->initializeEach();
+    }
+
+    /**
+     * Initialize all providers.
+     *
+     * @return void
+     */
+    protected function initializeEach() {
         foreach ($this->providers as $class => &$data) {
             if ( ! in_array(ProviderTag::INITIALIZED, array_get($data, 'tags'))) {
                 $this->configure();
@@ -94,7 +119,7 @@ class Kernel implements IKernel {
                         ->initialize($instance, $this->getSharedArguments());
                 }
 
-                $this->initialize();
+                $this->initializeEach();
                 break;
             }
         }
@@ -106,6 +131,15 @@ class Kernel implements IKernel {
      * @return void
      */
     public function boot() {
+        $this->bootEach();
+    }
+
+    /**
+     * Boot all providers.
+     *
+     * @return void
+     */
+    protected function bootEach() {
         foreach ($this->providers as $class => &$data) {
             if ( ! in_array(ProviderTag::BOOTED, array_get($data, 'tags'))) {
                 $this->initialize();
@@ -118,7 +152,7 @@ class Kernel implements IKernel {
                         ->boot($instance, $this->getSharedArguments());
                 }
 
-                $this->boot();
+                $this->bootEach();
                 break;
             }
         }
@@ -130,6 +164,17 @@ class Kernel implements IKernel {
      * @return void
      */
     public function shutdown() {
+        $this->shutdownEach();
+
+        foreach ($this->providers as $class => &$data) {
+            $data['tags'] = [];
+        }
+    }
+
+    /**
+     * Shutdown all providers.
+     */
+    protected function shutdownEach() {
         foreach ($this->providers as $class => &$data) {
             if ( ! in_array(ProviderTag::SHUTDOWN, array_get($data, 'tags'))) {
                 $this->boot();
@@ -142,7 +187,7 @@ class Kernel implements IKernel {
                         ->boot($instance, $this->getSharedArguments());
                 }
 
-                $this->shutdown();
+                $this->shutdownEach();
                 break;
             }
         }

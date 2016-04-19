@@ -145,10 +145,7 @@ class KernelTest extends PHPUnit_Framework_TestCase {
 
         $provider = array_pop($providers);
         $this->assertTrue(array_get($provider, 'instance') instanceof FakeProvider);
-        $this->assertTrue(in_array(ProviderTag::CONFIGURED, array_get($provider, 'tags')));
-        $this->assertTrue(in_array(ProviderTag::INITIALIZED, array_get($provider, 'tags')));
-        $this->assertTrue(in_array(ProviderTag::BOOTED, array_get($provider, 'tags')));
-        $this->assertTrue(in_array(ProviderTag::SHUTDOWN, array_get($provider, 'tags')));
+        $this->assertEquals([], array_get($provider, 'tags'));
     }
 
     public function test_providers_without_methods() {
