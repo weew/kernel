@@ -75,7 +75,7 @@ class Kernel implements IKernel {
      */
     protected function configureEach() {
         foreach ($this->providers as $class => &$data) {
-            if ( ! in_array(ProviderTag::CONFIGURED, array_get($data, 'tags'))) {
+            if ( ! array_contains(array_get($data, 'tags'), ProviderTag::CONFIGURED)) {
                 $this->create();
 
                 array_add($data, 'tags', ProviderTag::CONFIGURED);
@@ -108,7 +108,7 @@ class Kernel implements IKernel {
      */
     protected function initializeEach() {
         foreach ($this->providers as $class => &$data) {
-            if ( ! in_array(ProviderTag::INITIALIZED, array_get($data, 'tags'))) {
+            if ( ! array_contains(array_get($data, 'tags'), ProviderTag::INITIALIZED)) {
                 $this->configure();
 
                 array_add($data, 'tags', ProviderTag::INITIALIZED);
@@ -141,7 +141,7 @@ class Kernel implements IKernel {
      */
     protected function bootEach() {
         foreach ($this->providers as $class => &$data) {
-            if ( ! in_array(ProviderTag::BOOTED, array_get($data, 'tags'))) {
+            if ( ! array_contains(array_get($data, 'tags'), ProviderTag::BOOTED)) {
                 $this->initialize();
 
                 array_add($data, 'tags', ProviderTag::BOOTED);
@@ -176,7 +176,7 @@ class Kernel implements IKernel {
      */
     protected function shutdownEach() {
         foreach ($this->providers as $class => &$data) {
-            if ( ! in_array(ProviderTag::SHUTDOWN, array_get($data, 'tags'))) {
+            if ( ! array_contains(array_get($data, 'tags'), ProviderTag::SHUTDOWN)) {
                 $this->boot();
 
                 array_add($data, 'tags', ProviderTag::SHUTDOWN);
