@@ -1,11 +1,11 @@
 # PHP Kernel
 
-[![Build Status](https://img.shields.io/travis/weew/php-kernel.svg)](https://travis-ci.org/weew/php-kernel)
-[![Code Quality](https://img.shields.io/scrutinizer/g/weew/php-kernel.svg)](https://scrutinizer-ci.com/g/weew/php-kernel)
-[![Test Coverage](https://img.shields.io/coveralls/weew/php-kernel.svg)](https://coveralls.io/github/weew/php-kernel)
-[![Dependencies](https://img.shields.io/versioneye/d/php/weew:php-kernel.svg)](https://versioneye.com/php/weew:php-kernel)
-[![Version](https://img.shields.io/packagist/v/weew/php-kernel.svg)](https://packagist.org/packages/weew/php-kernel)
-[![Licence](https://img.shields.io/packagist/l/weew/php-kernel.svg)](https://packagist.org/packages/weew/php-kernel)
+[![Build Status](https://img.shields.io/travis/weew/kernel.svg)](https://travis-ci.org/weew/kernel)
+[![Code Quality](https://img.shields.io/scrutinizer/g/weew/kernel.svg)](https://scrutinizer-ci.com/g/weew/kernel)
+[![Test Coverage](https://img.shields.io/coveralls/weew/kernel.svg)](https://coveralls.io/github/weew/kernel)
+[![Dependencies](https://img.shields.io/versioneye/d/php/weew:kernel.svg)](https://versioneye.com/php/weew:kernel)
+[![Version](https://img.shields.io/packagist/v/weew/kernel.svg)](https://packagist.org/packages/weew/kernel)
+[![Licence](https://img.shields.io/packagist/l/weew/kernel.svg)](https://packagist.org/packages/weew/kernel)
 
 ## Table of contents
 
@@ -24,7 +24,7 @@
 
 ## Installation
 
-`composer require weew/php-kernel`
+`composer require weew/kernel`
 
 ## Introduction
 
@@ -114,7 +114,7 @@ $kernel->addProvider(MyProvider::class);
 
 ### Custom container support
 
-A better way to enable container access for your providers is to replace the default implementation of the `IProviderInvoker` with your own. In this example I'll be using this powerful [container](https://github.com/weew/php-container).
+A better way to enable container access for your providers is to replace the default implementation of the `IProviderInvoker` with your own. In this example I'll be using this powerful [container](https://github.com/weew/container).
 
 ```php
 class ContainerProviderInvoker implements IProviderInvoker {
@@ -156,8 +156,8 @@ From now on all providers will benefit from constructor and method injection and
 
 ## Existing container integrations
 
-There is an integration available for the [weew/php-container](https://github.com/weew/php-container) container. See [weew/php-kernel-container-aware](https://github.com/weew/php-kernel-container-aware).
+There is an integration available for the [weew/container](https://github.com/weew/container) container. See [weew/kernel-container-aware](https://github.com/weew/kernel-container-aware).
 
 ## Related projects
 
-- [PHP Container](https://github.com/weew/php-container) works very well together with this package.
+- [PHP Container](https://github.com/weew/container) works very well together with this package.
